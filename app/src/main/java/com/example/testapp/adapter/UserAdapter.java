@@ -7,21 +7,22 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.testapp.R;
+import com.example.testapp.model.Item;
 import com.example.testapp.model.UserResponse;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
-    List<UserResponse> mItems;
+public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> implements View.OnClickListener {
+    List<Item> mItems;
 
     public UserAdapter() {
         super();
-        mItems = new ArrayList<UserResponse>();
+        mItems = new ArrayList<Item>();
     }
 
     public void addData(UserResponse userResponse) {
-        mItems.add(userResponse);
+        mItems = userResponse.getItems();
         notifyDataSetChanged();
     }
 
@@ -40,10 +41,9 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, int i) {
-        UserResponse userResponse = mItems.get(i);
-        viewHolder.login.setText(userResponse.getLogin());
-        viewHolder.repos.setText("repos: " + userResponse.getPublicRepos());
-        viewHolder.blog.setText("blog: " + userResponse.getBlog());
+        Item item = mItems.get(i);
+        viewHolder.accountId.setText(String.valueOf(item.getReputation()));
+        viewHolder.displayName.setText(item.getDisplayName());
     }
 
     @Override
@@ -51,16 +51,21 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
         return mItems.size();
     }
 
+    @Override
+    public void onClick(View v) {
+        Item item = mItems.get(v.getId());
+    }
+
     class ViewHolder extends RecyclerView.ViewHolder {
-        public TextView login;
-        public TextView repos;
-        public TextView blog;
+        public TextView accountId;
+        public TextView displayName;
 
         public ViewHolder(View itemView) {
             super(itemView);
-            login = (TextView) itemView.findViewById(R.id.login);
-            repos = (TextView) itemView.findViewById(R.id.repos);
-            blog = (TextView) itemView.findViewById(R.id.blog);
+            accountId = (TextView) itemView.findViewById(R.id.accountId);
+            displayName = (TextView) itemView.findViewById(R.id.txt_display_name);
+
         }
     }
+
 }

@@ -2,8 +2,10 @@ package com.example.testapp;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 
 import com.example.testapp.adapter.UserAdapter;
@@ -11,6 +13,9 @@ import com.example.testapp.model.Data;
 import com.example.testapp.model.UserResponse;
 import com.example.testapp.services.ServiceFactory;
 import com.example.testapp.services.StackExchangeService;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
@@ -28,18 +33,32 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        if(toolbar!=null){
+            toolbar.setTitle("TestApp");
+        }
         RecyclerView mRecyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        mRecyclerView.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
+        mRecyclerView.setNestedScrollingEnabled(false);
         userAdapter = new UserAdapter();
         mRecyclerView.setAdapter(userAdapter);
+
         apiCall();
     }
 
     private void apiCall() {
         StackExchangeService service = ServiceFactory.createRetrofitService(StackExchangeService.class, StackExchangeService.SERVICE_ENDPOINT);
-        for (String login : Data.githubList) {
-            service.getUser(login)
+        Map<String, String> params = new HashMap<String, String>();
+        //fromdate=1298764800&todate=1298851200&order=desc&sort=reputation&site=stackoverflow
+        params.put("fromdate", "1298764800");
+        params.put("todate", "1298851200");
+        params.put("order", "desc");
+        params.put("sort", "reputation");
+        params.put("site", "stackoverflow");
+            service.getUser(params)
                     .subscribeOn(Schedulers.newThread())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(new Subscriber<UserResponse>() {
@@ -58,7 +77,7 @@ public class MainActivity extends AppCompatActivity {
                             userAdapter.addData(response);
                         }
                     });
-        }
+
     }
 
 }
