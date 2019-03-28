@@ -74,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
 
                         @Override
                         public final void onNext(UserResponse response) {
-                            userAdapter.addData(response);
+                            userAdapter.addData(response,MainActivity.this);
                         }
                     });
 
