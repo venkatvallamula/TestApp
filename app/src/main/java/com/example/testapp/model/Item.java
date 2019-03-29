@@ -134,6 +134,7 @@ public class Item implements Parcelable {
         link = in.readString();
         profileImage = in.readString();
         displayName = in.readString();
+        badgeCounts = in.readParcelable(BadgeCounts.class.getClassLoader());
         if (in.readByte() == 0) {
             acceptRate = null;
         } else {
@@ -393,11 +394,18 @@ public class Item implements Parcelable {
         dest.writeString(link);
         dest.writeString(profileImage);
         dest.writeString(displayName);
+        dest.writeParcelable(badgeCounts,flags);
         if (acceptRate == null) {
             dest.writeByte((byte) 0);
         } else {
             dest.writeByte((byte) 1);
             dest.writeInt(acceptRate);
+        }
+        if (badgeCounts == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeParcelable(badgeCounts,flags);
         }
     }
 }

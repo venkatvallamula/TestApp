@@ -13,7 +13,6 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".activity.UserDetails"
-
             android:theme="@style/AppTheme.NoActionBar"></activity>
         <activity
             android:name=".MainActivity"

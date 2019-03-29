@@ -7,6 +7,10 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
 
 import com.example.testapp.adapter.UserAdapter;
 import com.example.testapp.model.Data;
@@ -29,15 +33,23 @@ public class MainActivity extends AppCompatActivity {
         userAdapter = null;
     }
 
+    TextView toolbarTitle;
+    Button btnSearch;
+    EditText edtSearch;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        if(toolbar!=null){
-            toolbar.setTitle("TestApp");
-        }
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        toolbarTitle = (TextView) findViewById(R.id.toolbar_title);
+        toolbarTitle.setText(R.string.app_name);
+        btnSearch = (Button)findViewById(R.id.btn_search);
+        edtSearch = (EditText)findViewById(R.id.edt_search);
         RecyclerView mRecyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -45,38 +57,45 @@ public class MainActivity extends AppCompatActivity {
         mRecyclerView.setNestedScrollingEnabled(false);
         userAdapter = new UserAdapter();
         mRecyclerView.setAdapter(userAdapter);
-
-        apiCall();
+        btnSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                apiCall(edtSearch.getText().toString());
+            }
+        });
     }
 
-    private void apiCall() {
+    private void apiCall(String name) {
         StackExchangeService service = ServiceFactory.createRetrofitService(StackExchangeService.class, StackExchangeService.SERVICE_ENDPOINT);
         Map<String, String> params = new HashMap<String, String>();
-        //fromdate=1298764800&todate=1298851200&order=desc&sort=reputation&site=stackoverflow
+        params.put("page", "1");
+        params.put("pagesize", "20");
         params.put("fromdate", "1298764800");
         params.put("todate", "1298851200");
         params.put("order", "desc");
         params.put("sort", "reputation");
+        params.put("inname",name);
         params.put("site", "stackoverflow");
-            service.getUser(params)
-                    .subscribeOn(Schedulers.newThread())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(new Subscriber<UserResponse>() {
-                        @Override
-                        public final void onCompleted() {
-                            // do nothing
-                        }
 
-                        @Override
-                        public final void onError(Throwable e) {
-                            Log.e("GithubDemo", e.getMessage());
-                        }
+        service.getUser(params)
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<UserResponse>() {
+                    @Override
+                    public final void onCompleted() {
+                        // do nothing
+                    }
 
-                        @Override
-                        public final void onNext(UserResponse response) {
-                            userAdapter.addData(response,MainActivity.this);
-                        }
-                    });
+                    @Override
+                    public final void onError(Throwable e) {
+                        Log.e("GithubDemo", e.getMessage());
+                    }
+
+                    @Override
+                    public final void onNext(UserResponse response) {
+                        userAdapter.addData(response, MainActivity.this);
+                    }
+                });
 
     }
 
