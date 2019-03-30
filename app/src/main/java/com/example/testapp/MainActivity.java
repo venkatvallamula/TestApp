@@ -1,5 +1,6 @@
 package com.example.testapp;
 
+import android.app.ProgressDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DividerItemDecoration;
@@ -36,6 +37,7 @@ public class MainActivity extends AppCompatActivity {
     TextView toolbarTitle;
     Button btnSearch;
     EditText edtSearch;
+    ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
+        progressDialog = new ProgressDialog(MainActivity.this);
         getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         toolbarTitle = (TextView) findViewById(R.id.toolbar_title);
@@ -66,6 +68,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void apiCall(String name) {
+        progressDialog.show();
         StackExchangeService service = ServiceFactory.createRetrofitService(StackExchangeService.class, StackExchangeService.SERVICE_ENDPOINT);
         Map<String, String> params = new HashMap<String, String>();
         params.put("page", "1");
@@ -81,9 +84,11 @@ public class MainActivity extends AppCompatActivity {
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<UserResponse>() {
+
                     @Override
                     public final void onCompleted() {
                         // do nothing
+                        progressDialog.cancel();
                     }
 
                     @Override

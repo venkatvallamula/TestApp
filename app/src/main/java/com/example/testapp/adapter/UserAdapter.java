@@ -16,6 +16,8 @@ import com.example.testapp.model.Item;
 import com.example.testapp.model.UserResponse;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> implements View.OnClickListener {
@@ -29,7 +31,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> im
     }
 
     public void addData(UserResponse userResponse,Context context) {
-        mItems = userResponse.getItems();
+        mItems = sortList((ArrayList<Item>) userResponse.getItems());
         this.context = context;
         notifyDataSetChanged();
     }
@@ -84,6 +86,15 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> im
             displayName = (TextView) itemView.findViewById(R.id.txt_display_name);
             parentLayout = (LinearLayout)itemView.findViewById(R.id.parent_laout);
         }
+    }
+    ArrayList<Item> sortList(ArrayList<Item> list) {
+        Collections.sort(list, new Comparator<Item>() {
+            @Override
+            public int compare(Item teamMember1, Item teamMember2) {
+                return teamMember1.getDisplayName().compareTo(teamMember2.getDisplayName());
+            }
+        });
+        return list;
     }
 
 }

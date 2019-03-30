@@ -24,19 +24,20 @@
     <LinearLayout
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
-        android:layout_margin="5dp"
+        android:padding="5dp"
         android:orientation="horizontal">
         <EditText
             android:id="@+id/edt_search"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Search here"
+            android:layout_marginTop="5dp"
             android:layout_weight="0.3"
             android:textColor="#000"/>
         <Button
             android:id="@+id/btn_search"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="40dp"
             android:layout_weight="0.7"
             android:text="Search"
             android:textColor="#fff"

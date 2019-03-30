@@ -63,7 +63,7 @@ public class UserDetails extends AppCompatActivity {
         tvLocation.setText(item.getLocation());
         SimpleDateFormat timeStampFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         String date = timeStampFormat.format(item.getCreationDate());
-
+        tvAge.setText(getAge(item.getCreationDate()));
         tvDate.setText(date);
         tvBronze.setText("Bronze :"+String.valueOf(item.getBadgeCounts().getBronze()));
         tvSilver.setText("Silver :"+String.valueOf(item.getBadgeCounts().getSilver()));
@@ -83,20 +83,17 @@ public class UserDetails extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
-    private String getAge(String creationDate){
+
+    private String getAge(int creationDate){
         Calendar dob = Calendar.getInstance();
         Calendar today = Calendar.getInstance();
-        SimpleDateFormat timeStampFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-        Date date = null;
-        try {
-            date = timeStampFormat.parse(creationDate);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(date);
-        dob.set(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH));
-
+        SimpleDateFormat timeStampFormat = new SimpleDateFormat("yyyy-MM-dd");
+        String date = timeStampFormat.format(creationDate);
+        String [] dateParts = date.split("-");
+        int year = Integer.parseInt(dateParts[0]);
+        int month = Integer.parseInt(dateParts[1]);
+        int day = Integer.parseInt(dateParts[2]);
+        dob.set(year, month, day);
         int age = today.get(Calendar.YEAR) - dob.get(Calendar.YEAR);
 
         if (today.get(Calendar.DAY_OF_YEAR) < dob.get(Calendar.DAY_OF_YEAR)){
